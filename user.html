@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Profiles</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 700px; margin: 20px auto; padding: 0 20px; }
+        .user-card {
+            border: 1px solid #e0e0e0;
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+        .user-name { font-size: 1.15em; font-weight: bold; color: #2d3748; }
+        .section { margin-top: 8px; color: #4a5568; }
+        .section-title { font-weight: bold; margin-bottom: 4px; }
+    </style>
+</head>
+<body>
+    <h1>User Profiles</h1>
+    <div id="user-container"></div>
+
+    <script>
+        fetch('userProfiles.json')
+            .then(response => {
+                if (!response.ok) throw new Error('Fetch error: ' + response.status);
+                return response.json();
+            })
+            .then(users => {
+                const container = document.getElementById('user-container');
+                
+                users.forEach(user => {
+                    const card = document.createElement('div');
+                    card.className = 'user-card';
+                    card.innerHTML = `
+                        <div class="user-name">${user.firstName} ${user.lastName}</div>
+                        <div>Email: ${user.email}</div>
+                        <div>Date of Birth: ${user.dateOfBirth}</div>
+                        
+                        <div class="section">
+                            <div class="section-title">Address</div>
+                            <div>${user.address.street}</div>
+                            <div>${user.address.city}, ${user.address.state} ${user.address.zipCode}</div>
+                        </div>
+                        
+                        <div class="section">
+                            <div class="section-title">Preferences</div>
+                            <div>Theme: ${user.preferences.theme}</div>
+                            <div>Language: ${user.preferences.language}</div>
+                            <div>Notifications: ${user.preferences.notifications ? 'On' : 'Off'}</div>
+                            <div>Newsletter: ${user.preferences.subscription ? 'Subscribed' : 'Not subscribed'}</div>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            })
+            .catch(err => {
+                console.error('Fetch error:', err.message);
+                document.getElementById('user-container').textContent = 'Failed to load user profiles.';
+            });
+    </script>
+</body>
+</html>
